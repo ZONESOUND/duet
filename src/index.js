@@ -3,7 +3,8 @@ import $ from 'jquery';
 import ViewStep from '@zonesoundcreative/view-step';
 import {grantDeviceOrient} from './device';
 import {grantMicPermission, initRecordPage} from './mic';
-import {initPlayPage} from './play';
+import {initPlayPage, endPlayPage} from './play';
+import './index.css';
 
 let viewStep = new ViewStep(".step", 1, 3,{
     2: initRecordPage,
@@ -11,6 +12,7 @@ let viewStep = new ViewStep(".step", 1, 3,{
 });
 
 $('#start').click(async function() {
+    //viewStep.showNext();
     if (await grantDeviceOrient()) {
         if (await grantMicPermission()) {
             viewStep.showNext();
@@ -24,4 +26,5 @@ $('#next').click(function() {
 
 $('#prev').click(function() {
     viewStep.showPrev();
+    endPlayPage();
 })

@@ -1,31 +1,41 @@
+// webpack.config.dev.js
 var path = require('path')
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
-
 module.exports = {
-  entry: ['./src/index.js'], 
+  entry: [
+    './src/index.js'
+  ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].bundle.js',
-    libraryTarget: 'commonjs2',
-  },
-  module: {
-      rules: [{
-          test: /\.js/,
-          exclude: /(node_modules|bower_components)/,
-          use: [{
-              loader: 'babel-loader'
-          }]
-      }]
+    filename: '[name].bundle.js'
   },
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: './index.html'
     })
   ],
-  optimization: {
-    minimize: true
-  }
+  module: {
+    rules: [{
+      test: /\.js/,
+      exclude: /(node_modules|bower_components)/,
+      use: [{
+          loader: 'babel-loader'
+      }]
+    },
+    {
+      test: /\.css/,
+      use: ['style-loader', 'css-loader'],
+    },
+    {
+      test: /\.(png|jpe?g|gif|mid)$/i,
+      loader: 'file-loader',
+      options: {
+        // 配置 name 屬性 (第二步)
+        name: '[name].[ext]',
+      }
+    }
+  ]}
 }
