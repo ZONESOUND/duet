@@ -18,6 +18,11 @@ module.exports = {
       template: './index.html'
     })
   ],
+  externals: {
+		// require("jquery") is external and available
+		//  on the global var jQuery
+		"p5": "p5"
+	},
   module: {
     rules: [{
       test: /\.js/,

@@ -49,10 +49,12 @@ let acc = {x:-1, y:-1, z:-1}
 let orientation = {x:-1, y:-1, z:-1}
 let dispatchOrientation;
 let dispatchMotion;
+let self;
 
-function dispatchDevice({orientation, motion}) {
+function dispatchDevice({orientation, motion}, _self=null) {
     if (orientation) dispatchOrientation = orientation;
     if (motion) dispatchMotion = motion;
+    self = _self;
 }
 
 /*
@@ -70,7 +72,7 @@ function handleOrientation(event) {
         y: event.gamma,
         z: event.alpha
     }
-    if (dispatchOrientation) dispatchOrientation(event);
+    if (dispatchOrientation) dispatchOrientation(event, self);
 }
 
 /*
@@ -86,7 +88,7 @@ function handleMotion(event) {
         y: event.acceleration.y,
         z: event.acceleration.z,
     }
-    if (dispatchMotion) dispatchMotion(event);
+    if (dispatchMotion) dispatchMotion(event, self);
     //acc = event.acceleration;
 }
 

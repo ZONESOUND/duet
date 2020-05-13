@@ -1,8 +1,10 @@
-import Recorder from '@zonesoundcreative/web-recorder';
+//import Recorder from '@zonesoundcreative/web-recorder';
+import Recorder from './recorder';
 import $ from 'jquery';
 import ProgressBar from 'progressbar.js';
+import {playModeIns} from './index';
 
-let mediaStream;
+var mediaStream, source;
 let recorder;
 let progressbar;
 let recordLen = 400;
@@ -10,6 +12,8 @@ let recordLen = 400;
 let grantMicPermission = async () => {
     try {
         mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        initRecordPage();
+
     } catch(err) {
         //handle hint page here
         console.error(err);
@@ -19,10 +23,15 @@ let grantMicPermission = async () => {
     return true;
 }
 
+//let firstInit = true;
 let initRecordPage = function() {
+    //if (!firstInit) return;
+    //firstInit = false;
     console.log('init page');
     initRecord();
 }
+
+
 
 progressbar = new ProgressBar.Circle('#progress', {
     strokeWidth: 4,
@@ -43,6 +52,7 @@ progressbar = new ProgressBar.Circle('#progress', {
                 // $('#record').text('Record');
                 console.log('record stop');
                 recorder.stop();
+                console.log(recorder.getBuffer());
                 
             } else {
                 let left = (1-circle.value())*recordLen;
@@ -60,10 +70,10 @@ if (progressbar.text) {
 let initRecord = function() {
     let AudioContext = window.AudioContext|| window.webkitAudioContext ||      window.mozAudioContext || window.msAudioContext;
     let context = new AudioContext();
-    //console.log(mediaStream);
-    let source = context.createMediaStreamSource(mediaStream);
+    console.log(mediaStream);
+    source = context.createMediaStreamSource(mediaStream);
     recorder = new Recorder(source);
-    //console.log(recorder);
+    console.log(recorder);
     //init button
     // $('#record').click(function() {
     //     if (!recorder.isRecording()) { // to record
@@ -91,21 +101,26 @@ let initRecord = function() {
 
     $('#progress').click(function() {
         if (!recorder.isRecording()) { // to record
+        
             progressbar.animate(0, {
                 duration: 0
             }, ()=>{
-                progressbar.animate(1.0);
+                console.log('duration', playModeIns.getRecordLen());
+                progressbar.animate(1.0, {duration: playModeIns.getRecordLen()});
             });
             // $('#record').removeClass('btn-success');
             // $('#record').addClass('btn-danger');
             // $('#record').text('Stop');
-            recorder.record();
+            recorder.record(true);
             console.log('record start');
             
-        }
+        } 
+        // else {
+        //     recorder.stop();
+        //     console.log('record stop');
+        // }
 
     })
     
 };
-
 export {initRecordPage, grantMicPermission, recorder};
