@@ -11,6 +11,11 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: '[name].bundle.js'
   },
+  externals: {
+		// require("jquery") is external and available
+		//  on the global var jQuery
+		"p5": "p5"
+	},
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
