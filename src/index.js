@@ -26,14 +26,15 @@ $('#start').click(async function() {
     //viewStep.showNext();
     if (await grantDeviceOrient()) {
         if (await grantMicPermission()) {
+            console.log('show next!');
             viewStep.showNext();
         }
     }
 })
 
 $('.nextplay').click(function() {
-    playModeIns.init();
-    playStep.showNext();
+    console.log('click next');
+    playStep.showNext();    
 })
 
 $('.prevplay').click(function() {

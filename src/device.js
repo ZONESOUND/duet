@@ -29,18 +29,19 @@ function addDeviceEvent() {
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", handleOrientation, false);
+        initMotion();
     } else {
         alert('DeviceOrientationEvent is not supported!');
         console.log("DeviceOrientationEvent is not supported");
         return false;
     }
-    if (window.DeviceMotionEvent) {
-        window.addEventListener("devicemotion", handleMotion, true);
-    } else {
-        alert('DeviceMotionEvent is not supported!');
-        console.log("DeviceMotionEvent is not supported");
-        return false;
-    }
+    // if (window.DeviceMotionEvent) {
+    //     window.addEventListener("devicemotion", handleMotion, true);
+    // } else {
+    //     alert('DeviceMotionEvent is not supported!');
+    //     console.log("DeviceMotionEvent is not supported");
+    //     return false;
+    // }
     return true;
 }
 
@@ -50,6 +51,15 @@ let orientation = {x:-1, y:-1, z:-1}
 let dispatchOrientation;
 let dispatchMotion;
 let self;
+let motion;
+
+function initMotion(){
+    motion = {
+        x: new Motion(),
+        y: new Motion(),
+        z: new Motion()
+    }
+}
 
 function dispatchDevice({orientation, motion}, _self=null) {
     if (orientation) dispatchOrientation = orientation;
@@ -73,6 +83,17 @@ function handleOrientation(event) {
         z: event.alpha
     }
     if (dispatchOrientation) dispatchOrientation(event, self);
+    if (dispatchMotion) {
+        motion.x.calculate(event.beta);
+        motion.y.calculate(event.gamma);
+        motion.z.calculate(event.alpha);
+        event.acceleration = {
+            x: motion.x.a,
+            y: motion.y.a,
+            z: motion.z.a
+        }
+        dispatchMotion(event, self);
+    }
 }
 
 /*
@@ -91,5 +112,29 @@ function handleMotion(event) {
     if (dispatchMotion) dispatchMotion(event, self);
     //acc = event.acceleration;
 }
+
+class Motion {
+    p = 0;
+    v = 0;
+    a = 0;
+    lastP = 0;
+    lastV = 0;
+    lastA = 0;
+    constructor() {
+
+    }
+
+    calculate(value) {
+        this.lastP = this.p;
+        this.lastV = this.v;
+        this.lastA = this.a;
+        this.p = value;
+
+        this.v = this.p - this.lastP;
+        this.a = this.v - this.lastV;
+    }
+}
+
+
 
 export {dispatchDevice, grantDeviceOrient};

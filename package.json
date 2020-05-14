@@ -2,6 +2,7 @@
   "name": "Duet",
   "version": "1.0.0",
   "description": "",
+  "homepage": "http://zonesound.github.io/duet",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -9,7 +10,9 @@
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --https --host 0.0.0.0 --config webpack.dev.config.babel.js --mode development",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "spredeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -23,6 +26,7 @@
     "babel-polyfill": "^6.26.0",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
+    "gh-pages": "^2.2.0",
     "html-webpack-plugin": "^4.2.0",
     "midi-player-js": "^2.0.5",
     "progressbar.js": "^1.1.0",

@@ -49,7 +49,7 @@ export class Shaker extends PlayMode {
     }
 
     playWhenAcc(event, self) {
-        if (event.acceleration.z > 2) {
+        if (event.acceleration.z > 5) {
             self.playImmediately();
         }
     }
@@ -81,14 +81,14 @@ export class Thrower extends PlayMode {
 
     detectShake(event, self) {
         //console.log('detect!', self.prev, self.prevShake);
-        if (event.acceleration.y > 3) {
+        if (event.acceleration.y > 10) {
             if (self.prev == -1 || new Date() - self.prevShake > 1000) {
                 self.recorder.play()
                 console.log('play');
             }
             self.prevShake = new Date();
             self.prev = 1;
-        } else if (event.acceleration.y < -1) {
+        } else if (event.acceleration.y < -8) {
             if (self.prev == 1 || new Date() - self.prevShake > 1000) {
                 self.recorder.play((buffer)=>{ 
                     return buffer.slice().reverse();
@@ -154,8 +154,8 @@ export class Mover extends PlayMode {
     }
 
     play(playbuffer) {
-        
-        let playSource = this.context.createBufferSource();
+        console.log('play~');
+        this.playSource = this.context.createBufferSource();
         let newBuffer = this.context.createBuffer(1, playbuffer.length, this.context.sampleRate );
         newBuffer.getChannelData(0).set(playbuffer);
         
@@ -173,26 +173,25 @@ export class Mover extends PlayMode {
         // playSource.filter = biquadFilter;
         // playSource.lfo = lfo;
         // playSource.lfoGain = lfoGain;
-        playSource.buffer = newBuffer;
+        this.playSource.buffer = newBuffer;
         //let gain = this.context.createGain();
         //console.log(this.context, playSource, gain);
         //playSource.gain = gain;
-        playSource.loop = true;
+        this.playSource.loop = true;
 
         //this.playSource.connect(biquadFilter);
         //biquadFilter.connect(context.destination);
         //oscGain.connect(playSource.gain);
-        playSource.connect(this.context.destination);
-        playSource.start();
+        this.playSource.connect(this.context.destination);
+        this.playSource.start();
 
         //lfo.connect(lfoGain)
         //lfoGain.connect(biquadFilter.frequency);
         //lfo.start();
 
-        playSource.onended = function() {
-            playSource.disconnect();
+        this.playSource.onended = function() {
+            this.playSource.disconnect();
         }
-        this.playSource = playSource;
 
         // let playSource = this.context.createBufferSource();
         // let newBuffer = this.context.createBuffer(1, playbuffer.length, this.context.sampleRate);
